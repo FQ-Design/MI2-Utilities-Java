@@ -186,7 +186,23 @@ public class MI2UI extends Mindow2{
             }).top();
         }, true).setDirection(true, true).setDuration(0.1f).setCollapsed(true, () -> !showQuickSettings)).growX();
     }
-
+        public static String getDefaultLocaleByTimeZone() {
+        try {
+            String zoneId = java.time.ZoneId.systemDefault().getId();
+            if (zoneId.contains("Shanghai") || zoneId.contains("Chongqing") || zoneId.contains("Hong_Kong") || zoneId.contains("Taipei")) {
+                return "zh_CN";
+            } else if (zoneId.contains("Tokyo")) {
+                return "ja";
+            } else if (zoneId.contains("Seoul")) {
+                return "ko";
+            } else if (zoneId.contains("Moscow")) {
+                return "ru";
+            } else if (zoneId.contains("Europe")) {
+                return "de";
+            }
+        } catch (Exception ignored) {}
+        return "en";
+    }
     @Override
     public void initSettings(){
         super.initSettings();
