@@ -206,7 +206,26 @@ public class MI2UI extends Mindow2{
     @Override
     public void initSettings(){
         super.initSettings();
-
+        settings.title("语言 / Language");
+        settings.entry("界面语言选择", (entry, t) -> {
+            String currentLang = Core.settings.getString("locale", getDefaultLocaleByTimeZone());
+            SelectBox<String> langBox = new SelectBox<>();
+            langBox.setItems("zh_CN", "en", "ja", "ko", "ru", "de", "fr", "pt_BR", "vi");
+            langBox.setSelected(currentLang);
+            langBox.changed(lang -> {
+                Core.settings.put("locale", lang);
+                java.util.Locale locale = java.util.Locale.forLanguageTag(lang.replace('_', '-'));
+                java.util.Locale.setDefault(locale);
+                try {
+                    Core.bundle = arc.util.serialization.I18NBundle.createBundle(Core.files.internal("bundles/bundle"), locale);
+                    Vars.ui.showInfoFade("@mi2ui.buttons.languageChanged"); // 提示
+                } catch (Exception e) {
+                    Vars.ui.showErrorMessage("Failed to reload bundle: " + e.getMessage());
+                }
+            });
+            
+            t.add(langBox).width(200f).left();
+        });
         settings.title("graphics.ui");
 
         settings.checkPref("showEmojis", false, b -> emojis.addTo(b ? Core.scene.root:null));
