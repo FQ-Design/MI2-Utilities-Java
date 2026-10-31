@@ -2,6 +2,7 @@
 
 ---
 - **自述文件 [English](README.md) | [中文](README_zh.md)**
+- ***语言自述文件 [English](Language.md)|[中文](Language_zh.md)***
 
 提升游戏体验的辅助工具集，有爱自取.
 
