@@ -208,7 +208,6 @@ public class MI2UI extends Mindow2{
 
     @Override
     public void initSettings(){
-        super.initSettings();
         settings.title(Core.bundle.get("settings.title.Language", "Language"));
         settings.entry(Core.bundle.get("settings.entry.SelectLanguage", "Select Language"), (entry, t) -> {
             String currentLang = Core.settings.getString("locale", getDefaultLocaleByTimeZone());
@@ -226,13 +225,52 @@ public class MI2UI extends Mindow2{
                                 {"Deutsch (de)", "de"},
                                 {"Français (fr)", "fr"}
                         };
-
                         for (String[] lang : langs) {
-                            p.button(lang[0], () -> {
-                                Core.settings.put("locale", lang[1]);
-                                ui.showInfoFade(Core.bundle.get("language.saved", "Language saved. Restart game to apply."));
-                                this.hide();
-                            }).size(250f, 50f).pad(5f).row();
+                            for (String[] l : langs) {
+                                // 修改变量名，避免与外层变量冲突
+                                final String langName = l[0];
+                                final String langCode = l[1];
+
+                                p.button(langName, () -> {
+                                    Core.settings.put("locale", langCode);
+
+                                    try {
+                                        // 1. 强制更新 Locale
+                                        java.util.Locale locale = java.util.Locale.forLanguageTag(langCode.replace('_', '-'));
+                                        java.util.Locale.setDefault(locale);
+
+                                        // 2. 找到模组语言包路径
+                                        String fileName = "bundles/bundle" + (langCode.equals("en") ? "" : "_" + langCode) + ".properties";
+                                        arc.files.Fi fi = Core.files.internal(fileName);
+                                        if (!fi.exists()) {
+                                            fi = Core.files.internal("bundles/bundle.properties");
+                                        }
+
+                                        // 3. 以 UTF-8 读取原生中文
+                                        java.util.Properties modProps = new java.util.Properties();
+                                        try (java.io.InputStreamReader reader = new java.io.InputStreamReader(fi.read(), java.nio.charset.StandardCharsets.UTF_8)) {
+                                            modProps.load(reader);
+                                        }
+
+                                        // 4. 利用反射直接注入原版 Core.bundle 内部
+                                        java.lang.reflect.Field field = Core.bundle.getClass().getDeclaredField("properties");
+                                        field.setAccessible(true);
+                                        java.util.Properties originalProps = (java.util.Properties) field.get(Core.bundle);
+
+                                        if (originalProps != null) {
+                                            originalProps.putAll(modProps);
+                                        }
+
+                                        ui.showInfoFade("Language changed dynamically!");
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        ui.showException("Failed to load language bundle", e);
+                                    }
+
+                                    this.hide();
+                                }).size(250f, 50f).pad(5f).row();
+                            }
                         }
                     }).grow();
                     show();
