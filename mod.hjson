@@ -1,0 +1,25 @@
+#the mod name as displayed in-game
+displayName: "MI2-Utilities Java"
+
+#the internal name of your mod
+name: "mi2-utilities-java"
+
+#the mod version
+version: 1.16.2
+
+#the minimum game build required to run this mod
+minGameVersion: 160
+
+#this is a java mod
+java: true
+
+hidden: true
+
+#your name
+author: "BlackDeluxeCat"
+
+#the fully qualified main class of the mod
+main: "mi2u.MI2Utilities"
+
+#the mod description as seen in the mod dialog
+description: "QOL Mod, powerful assists to vanilla gameplay. For destined Mindustry players."
