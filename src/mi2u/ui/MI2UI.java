@@ -209,17 +209,16 @@ public class MI2UI extends Mindow2{
     @Override
     public void initSettings(){
         super.initSettings();
-
-        settings.title("Language / 语言");
-        settings.entry("Select Language", (entry, t) -> {
+        settings.title(Core.bundle.get("settings.title.Language", "Language"));
+        settings.entry(Core.bundle.get("settings.entry.SelectLanguage", "Select Language"), (entry, t) -> {
             String currentLang = Core.settings.getString("locale", getDefaultLocaleByTimeZone());
-
             t.button(currentLang, () -> {
-                new BaseDialog("Select Language") {{
+                new BaseDialog(Core.bundle.get("settings.entry.SelectLanguage", "Select Language")) {{
                     addCloseButton();
                     cont.pane(p -> {
                         String[][] langs = {
-                                {"中文 (zh_CN)", "zh_CN"},
+                                {"简体中文 (zh_CN)", "zh_CN"},
+                                {"繁體中文 (zh_TW)", "zh_TW"},
                                 {"English (en)", "en"},
                                 {"日本語 (ja)", "ja"},
                                 {"한국어 (ko)", "ko"},
@@ -227,11 +226,11 @@ public class MI2UI extends Mindow2{
                                 {"Deutsch (de)", "de"},
                                 {"Français (fr)", "fr"}
                         };
+
                         for (String[] lang : langs) {
                             p.button(lang[0], () -> {
                                 Core.settings.put("locale", lang[1]);
-                                ui.showInfoFade("语言已保存为 " + lang[1] + "，重启游戏后完全生效");
-
+                                ui.showInfoFade(Core.bundle.get("language.saved", "Language saved. Restart game to apply."));
                                 this.hide();
                             }).size(250f, 50f).pad(5f).row();
                         }
